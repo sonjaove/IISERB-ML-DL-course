@@ -4,15 +4,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 def train_and_evaluate(X_train, y_train, X_test, y_test, degree):
     scale_poly=PolynomialFeatures(degree)
     X_train_poly = scale_poly.fit_transform(X_train, degree)
