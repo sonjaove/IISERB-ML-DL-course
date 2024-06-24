@@ -1,7 +1,4 @@
-
-
-
-
+# form assignment 4.
 
 
 def train_and_evaluate(X_train, y_train, X_test, y_test, degree):
@@ -66,3 +63,95 @@ for degree in degrees:
 
 plt.tight_layout()
 plt.show()
+
+
+
+# from assignmnent 9
+
+#sample cnnclass for the model
+class ConvToDense(torch.nn.Module):
+    def __init__(self):
+        super(ConvToDense, self).__init__()
+        self.conv = torch.nn.Conv2d(in_channels=128, out_channels=64, kernel_size=3, stride=1, padding=1)
+        self.fc = torch.nn.Linear(64 * 32 * 32, 10)  # 10 neuron if we want to do 10 class classification
+    
+    def forward(self, x): # x: (1, 128, 32, 32)
+        x = self.conv(x) # First convolutional layer, x: (1, 64, 32, 32)
+        x = torch.relu(x)  # Apply ReLU activation
+        x = x.view(x.size(0), -1)  # Flatten the tensor, x: (1, 64 * 32 * 32)
+        x = self.fc(x)
+        return x
+
+
+
+#sample cnn model
+class ConvNet(torch.nn.Module):
+    def __init__(self):
+        super(ConvNet, self).__init__()
+        self.conv1 = torch.nn.Conv2d(3, 6, 5)
+        self.pool = torch.nn.MaxPool2d(2, 2)
+        self.conv2 = torch.nn.Conv2d(6, 16, 5)
+        self.fc1 = torch.nn.Linear(16 * 5 * 5, 120)
+        self.fc2 = torch.nn.Linear(120, 84)
+        self.fc3 = torch.nn.Linear(84, 10)
+
+    def forward(self, x):
+        x = self.pool(torch.nn.functional.F.relu(self.conv1(x)))
+        x = self.pool(torch.nn.functional.F.relu(self.conv2(x)))
+        x = x.view(-1, 16 * 5 * 5)
+        x = torch.nn.functional.F.relu(self.fc1(x))
+        x = torch.nn.functional.F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+net = ConvNet()
+
+
+
+# Let us try with more complex model and more training epochs
+class ConvNet1(torch.nn.Module):
+    def __init__(self):
+        super(ConvNet1, self).__init__()
+        self.conv1 = torch.nn.Conv2d(3, 32, 3, padding=1)
+        self.conv2 = torch.nn.Conv2d(32, 64, 3, padding=1)
+        self.conv3 = torch.nn.Conv2d(64, 128, 3, padding=1)
+        self.pool = torch.nn.MaxPool2d(2, 2)
+        self.fc1 = torch.nn.Linear(128 * 4 * 4, 512)
+        self.fc2 = torch.nn.Linear(512, 256)
+        self.fc3 = torch.nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = self.pool(torch.nn.functional.F.relu(self.conv1(x)))
+        x = self.pool(torch.nn.functional.F.relu(self.conv2(x)))
+        x = self.pool(torch.nn.functional.F.relu(self.conv3(x)))
+        x = x.view(-1, 128 * 4 * 4)
+        x = torch.nn.functional.F.relu(self.fc1(x))
+        x = torch.nn.functional.F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+net = ConvNet1()
+
+
+
+#trying to use coustom filter for assignment 9 
+
+#using the custom filter for the CNN model.
+#data_tensor is the tensors of the input data of the class.
+class CNNClassifier(torch.nn.Module):
+    def __init__(self):
+        super(CNNClassifier, self).__init__()
+        self.conv1 = torch.nn.Conv2d(1, 1, kernel_size=3, padding=1, stride=1)
+        self.conv1.weight=torch.nn.Parameter(filter_tensor.unsqueeze(0))
+        self.conv2 = torch.nn.Conv2d(1, 1, kernel_size=3, padding=1, stride=1)
+        self.conv2.weight=torch.nn.Parameter(filter_tensor.unsqueeze(0))
+        self.pool = torch.nn.MaxPool2d(2, 2)
+        self.fc1 = torch.nn.Linear(1* 3 * 4, 64)
+        self.fc2 = torch.nn.Linear(64, 1)
+    def forward(self, x): # x=data_tensor
+        x = self.pool(torch.relu(self.conv1(x)))
+        x = self.pool(torch.relu(self.conv2(x)))
+        x = x.view(-1, 1* 3 * 4)
+        x = torch.relu(self.fc1(x))
+        x = torch.sigmoid(self.fc2(x))
+        return x
