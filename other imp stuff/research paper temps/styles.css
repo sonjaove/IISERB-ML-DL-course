@@ -1,0 +1,13 @@
+div {
+    text-align: center;
+}
+.intro{
+    text-align: left;
+}
+.aim{
+    text-align: right;
+}
+
+.intro p, .aim p{
+    display: inline-block;
+}
