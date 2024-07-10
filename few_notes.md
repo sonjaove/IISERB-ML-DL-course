@@ -17,3 +17,6 @@ Handling incomplete batches: You can choose to drop the last incomplete batch if
 
 
 - where excatly are the feature maps being flattened in assignment 9?
+
+
+- Transformations are commonly used in computer vision tasks to preprocess or augment images. They can include operations such as resizing, cropping, normalization, or applying various image filters. By applying transformations, you can modify the images in a way that is beneficial for your specific task, such as improving the quality, adjusting the size, or enhancing certain features, and the transform class does all that.
