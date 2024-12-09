@@ -8,7 +8,7 @@ this script will interpolate the values from 0.25 to 0.1 resolution and save the
 import xarray as xr
 import scipy.interpolate as sci
 from tqdm import tqdm
-from resize import Resize
+# from resize import Resize
 import numpy as np
 import matplotlib.pyplot as plt
 import PIL
@@ -22,16 +22,20 @@ import cartopy.feature as cfeature
 from scipy.ndimage import gaussian_filter
 import torch
 
-process=Resize()
+# process=Resize()
 class interpolate():
 
-    def make_image_from_data(self, data):
+    def make_image_from_data(self, data, grayscale=True):
         images = []
 
-        for i,j in tqdm(enumerate(data), total=len(data)):
-            colormap=plt.get_cmap('viridis')
-            rgba_img = colormap(j,bytes=True)[:,:,:3]
-            images.append(Image.fromarray(rgba_img, 'RGB'))
+        for i, j in tqdm(enumerate(data), total=len(data)):
+            if grayscale:
+                gray_img = np.uint8(255 * (j - np.min(j)) / (np.max(j) - np.min(j)))
+                images.append(Image.fromarray(gray_img, 'L'))
+            else:
+                colormap = plt.get_cmap('viridis')
+                rgba_img = colormap(j, bytes=True)[:, :, :3]
+                images.append(Image.fromarray(rgba_img, 'RGB'))
 
         return images
 
